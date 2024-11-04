@@ -1,7 +1,8 @@
 import json
 import asyncio
 from pyppeteer import launch
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+import atexit
 import aiofiles
 import random
 import requests
@@ -105,6 +106,12 @@ async def main():
 
     if browser:
         await browser.close()
+
+# Register a function to close the browser on exit
+@atexit.register
+def close_browser():
+    if browser:
+        asyncio.run(browser.close())
 
 async def send_telegram_message(message):
     url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
