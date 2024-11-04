@@ -87,8 +87,8 @@ async def main():
         is_logged_in = await login(username, password, panel)
 
         if is_logged_in:
-            now_utc = format_to_iso(datetime.utcnow())
-            now_beijing = format_to_iso(datetime.utcnow() + timedelta(hours=8))
+            now_utc = format_to_iso(datetime.now(timezone.utc))
+            now_beijing = format_to_iso(datetime.now(timezone.utc) + timedelta(hours=8))
             success_message = f'{serviceName}账号 {username} 于北京时间 {now_beijing}（UTC时间 {now_utc}）登录成功！'
             message += success_message + '\n'
             print(success_message)
@@ -102,6 +102,9 @@ async def main():
     message += f'所有{serviceName}账号登录完成！'
     await send_telegram_message(message)
     print(f'所有{serviceName}账号登录完成！')
+
+    if browser:
+        await browser.close()
 
 async def send_telegram_message(message):
     url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
